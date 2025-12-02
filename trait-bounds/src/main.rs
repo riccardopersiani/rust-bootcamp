@@ -1,10 +1,14 @@
 // Note: Rust does not support classic inheritance. Rust support traits to achieve polymorphism.
 
 // The only functionality related to parking is abstracted into a trait.
-trait Park {
+trait Vehicle: Paint {
     fn park(&self);
+    fn get_default_color() -> String {
+        "black".to_owned()
+    }
 }
 
+// Supertrait
 trait Paint {
     fn paint(&self, color: String) {
         println!("Painting with color: {}", color);
@@ -23,7 +27,7 @@ struct Car {
     info: VehicleInfo,
 }
 
-impl Park for Car {
+impl Vehicle for Car {
     fn park(&self) {
         println!(
             "Parking the car: {} {} {}",
@@ -51,15 +55,6 @@ impl Truck {
     fn unload(&self) {
         println!(
             "Unloading the truck: {} {} {}",
-            self.info.year, self.info.make, self.info.model
-        );
-    }
-}
-
-impl Park for Truck {
-    fn park(&self) {
-        println!(
-            "Parking the truck: {} {} {}",
             self.info.year, self.info.make, self.info.model
         );
     }
@@ -103,7 +98,7 @@ fn paint_red3(object: &impl Paint) {
 fn paint_vehicle_red<T>(object: &T)
 where
     // T must be any type that implements both traits
-    T: Paint + Park,
+    T: Vehicle,
 {
     object.paint("red".to_owned());
 }
