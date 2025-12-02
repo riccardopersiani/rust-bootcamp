@@ -83,8 +83,8 @@ fn paint_red<T>(object: &T) {
     // object.paint("red".to_owned());
 }
 
-// Here we enforce the trait paint()
-fn paint_red2<T: Paint>(object: &T) {
+// Here we enforce to accept a trait object, now accepts a reference to some type that implements the Paint trait
+fn paint_red2(object: &dyn Paint) {
     // Error: no method paint was found as for reference. We don't know if the object implement that method.
     object.paint("red".to_owned());
 }
@@ -103,8 +103,24 @@ where
     object.paint("red".to_owned());
 }
 
-fn create_paintable_object() -> impl Paint {
-    House {}
+// Box points to something allocated to the heap
+// static dispatch: knows what to call at compile time
+// generics are substituted to concrete objects at compile time
+//
+// dynamic dispatch - compiler cannot figure which concrete method to call, so it needs to be done at run time
+// the advantage is that is more flexible, disadvantage is performance
+fn create_paintable_object(vehicle: bool) -> Box<dyn Paint> {
+    if vehicle {
+        Box::new(Car {
+            info: VehicleInfo {
+                make: "Honda".to_owned(),
+                model: "Civic".to_owned(),
+                year: 2000,
+            },
+        })
+    } else {
+        Box::new(House {})
+    }
 }
 
 fn main() {
@@ -116,12 +132,16 @@ fn main() {
         },
     };
     let house = House {};
-    let object = create_paintable_object();
+    let object = create_paintable_object(true);
+
+    // ref to types that implement the Paint trait
+    let paintable_objects: Vec<&dyn Paint> = vec![&car, &house];
 
     // all pass cause all implement the pain method
     paint_red2(&car);
     paint_red2(&house);
-    paint_red2(&object);
+    // convert object from a box pointer to a reference
+    paint_red2(object.as_ref());
 
     //
     paint_vehicle_red(&car);
@@ -129,3 +149,5 @@ fn main() {
     // paint_vehicle_red(&house);
     // paint_vehicle_red(&object);
 }
+
+// trait objects are used when the compiler cannot tell what to use at compile type
