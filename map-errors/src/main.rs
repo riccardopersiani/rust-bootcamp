@@ -1,16 +1,29 @@
-use std::error::Error;
+// Complete the code by implementing `From<ParseIntError>` for `AddError`.
 
-struct ParsePaymentInfoError {
-    source: Option<Box<dyn Error>>,
-    msg: Option<String>,
+use std::num::ParseIntError;
+
+#[derive(Debug)]
+enum AddError {
+    ParseError(ParseIntError),
+    Overflow,
 }
 
-// fn parse_card_numbers(card: &str) -> Result<Vec<u32>, ParsePaymentInfoError> {
-//     let numbers = card.split(" ");
-// }
+impl From<ParseIntError> for AddError {
+    fn from(value: ParseIntError) -> Self {
+        Self::ParseError(value)
+    }
+}
+
+fn add(num1: &str, num2: &str) -> Result<u8, AddError> {
+    let num1 = num1.parse::<u8>()?;
+    let num2 = num2.parse::<u8>()?;
+    num1.checked_add(num2).ok_or(AddError::Overflow)
+}
 
 fn main() {
-    let card = "123 1234 1234";
-    let vec: Vec<&str> = card.split(" ").collect();
-    println!("{}", vec[1]);
+    let (input1, input2) = ("23", "50");
+    match add(input1, input2) {
+        Ok(res) => println!("{input1} + {input2} = {res}"),
+        Err(e) => println!("Error: {e:?}"),
+    }
 }
