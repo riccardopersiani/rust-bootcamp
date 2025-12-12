@@ -39,6 +39,8 @@ fn main() {
     println!("{}", validate_credentials(&creds.username, &creds.password));
     println!("{}", validator(&creds.username, &creds.password));
     println!("{}", creds.is_valid());
+    let validator_password = get_password_validator(8, true);
+    let default_creds = get_default_creds(validator_password);
 }
 
 fn validate_credentials(username: &str, password: &str) -> bool {
@@ -47,3 +49,24 @@ fn validate_credentials(username: &str, password: &str) -> bool {
 
 // alternative to create a vlidation function is to store a validation function in a Closure.
 // Closure are anonymous functions which you can store in varialbes or pass as arguments to other fucntions
+
+fn get_default_creds<T>(f: T) -> Credentials<T>
+where
+    T: Fn(&str, &str) -> bool,
+{
+    Credentials {
+        username: "guest".to_owned(),
+        password: "password".to_owned(),
+        validator: f,
+    }
+}
+
+fn get_password_validator(min_len: usize, special_char: bool) -> Box<dyn Fn(&str, &str) -> bool> {
+    if special_char {
+        Box::new(move |_: &str, password: &str| {
+            !password.len() >= min_len && password.contains(['!'])
+        })
+    } else {
+        Box::new(move |_: &str, password: &str| !password.len() >= min_len)
+    }
+}
