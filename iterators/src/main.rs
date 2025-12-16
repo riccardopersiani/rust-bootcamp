@@ -88,7 +88,6 @@ fn main() {
 
     let mut scores_iter = scores.iter();
     let first = scores_iter.next();
-    println!("{first}");
 
     for (team, score) in scores {
         println!("{team} got {score} points");
