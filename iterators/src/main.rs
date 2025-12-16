@@ -1,5 +1,7 @@
 // Make the code compile by implementing the Iterator trait for `Queue`.
 
+use std::collections::HashMap;
+
 struct Queue {
     items: Vec<i32>,
 }
@@ -72,5 +74,23 @@ fn main() {
     // will print only the string but not None.
     for item in p {
         println!("{item}");
+    }
+
+    let input: &str = "test\n";
+    let mut c = input.chars();
+    let first = c.as_str();
+    print!("{first}");
+
+    let mut scores = HashMap::new();
+    scores.insert("red team".to_owned(), 2);
+    scores.insert("blue team".to_owned(), 3);
+    scores.insert("yellow team".to_owned(), 4);
+
+    let mut scores_iter = scores.iter();
+    let first = scores_iter.next();
+    println!("{first}");
+
+    for (team, score) in scores {
+        println!("{team} got {score} points");
     }
 }
