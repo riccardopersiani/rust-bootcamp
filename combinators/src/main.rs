@@ -42,4 +42,12 @@ fn main() {
     for s in good_students {
         println!("{s:?}");
     }
+
+    let r1;
+    {
+        let s1 = String::from("LGR");
+        r1 = &s1;
+    }
+
+    println!("{r1}")
 }
